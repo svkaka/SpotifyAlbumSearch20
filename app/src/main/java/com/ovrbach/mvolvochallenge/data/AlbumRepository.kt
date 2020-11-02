@@ -4,11 +4,11 @@ import com.ovrbach.mvolvochallenge.model.entity.AlbumDetails
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
 import com.ovrbach.mvolvochallenge.model.mapper.AlbumDetailsMapper
 import com.ovrbach.mvolvochallenge.model.mapper.AlbumResponseMapper
-import com.ovrbach.mvolvochallenge.remote.AlbumService
+import com.ovrbach.mvolvochallenge.remote.SearchService
 import javax.inject.Inject
 
 class AlbumRepository @Inject constructor(
-    private val remoteSource: AlbumService,
+    private val remoteSource: SearchService,
     private val albumsMapper: AlbumResponseMapper,
     private val detailsMapper: AlbumDetailsMapper
 ) {

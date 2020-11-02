@@ -1,34 +1,60 @@
 package com.ovrbach.mvolvochallenge.app
 
-import com.ovrbach.mvolvochallenge.data.AlbumRepository
-import com.ovrbach.mvolvochallenge.model.mapper.AlbumResponseMapper
-import com.ovrbach.mvolvochallenge.model.mapper.ArtistMapper
-import com.ovrbach.mvolvochallenge.model.mapper.ImageMapper
-import com.ovrbach.mvolvochallenge.remote.AlbumService
-import com.ovrbach.mvolvochallenge.remote.apiRetrofit
-import dagger.Component
+import com.ovrbach.mvolvochallenge.app.di.ClientId
+import com.ovrbach.mvolvochallenge.app.di.ClientSecret
+import com.ovrbach.mvolvochallenge.model.entity.Session
+import com.ovrbach.mvolvochallenge.model.entity.SessionImpl
+import com.ovrbach.mvolvochallenge.remote.*
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.DefineComponent
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.components.FragmentComponent
-import javax.inject.Singleton
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 @Module
 @InstallIn(ApplicationComponent::class)
 class RemoteModule {
 
     @Provides
-    fun provideAlbumService(): AlbumService = apiRetrofit.create(AlbumService::class.java)
+    fun provideAuthService(): AuthService = Retrofit.Builder()
+        .baseUrl(RemoteServiceConstants.BASE_AUTH_URL)
+        .addConverterFactory(MoshiConverterFactory.create())
+        .client(OkHttpClient()).build().create(AuthService::class.java)
 
+    @Provides
+    fun provideApiClient(authInterceptor: AuthInterceptor): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
+        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        .build()
+
+    @Provides
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(RemoteServiceConstants.BASE_API_URL)
+        .addConverterFactory(MoshiConverterFactory.create())
+        .client(okHttpClient)
+        .build()
+
+    @Provides
+    fun provideAlbumService(apiRetrofit: Retrofit): SearchService =
+        apiRetrofit.create(SearchService::class.java)
+
+    @Provides
+    @ClientSecret
+    fun provideSecret() = RemoteServiceConstants.SECRET
+
+    @Provides
+    @ClientId
+    fun provideClientId() = RemoteServiceConstants.CLIENT_CODE
 
 }
 
 @Module
 @InstallIn(ApplicationComponent::class)
-class MapperModule {
-}
+class UtilModule {
 
-class RepositoryModule {
+    @Provides
+    fun provideSession(): Session = SessionImpl()
 }

@@ -1,10 +1,9 @@
 package com.ovrbach.mvolvochallenge.model.entity
 
+
 interface Session {
-    val isLoggedIn: Boolean
-
-    fun saveToken(token: String?)
-    val token: String?
-
-    fun invalidate()
+    fun attemptedLogin(): Boolean
+    fun token(): String?
+    fun saveToken(token: String)
+    fun cleanSession(): Boolean
 }

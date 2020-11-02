@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface AlbumService {
+interface SearchService {
 
     @GET("search/")
     suspend fun getAlbums(
