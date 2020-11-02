@@ -1,6 +1,6 @@
 package com.ovrbach.mvolvochallenge.remote
 
-import com.ovrbach.mvolvochallenge.model.dto.auth.TokenResponse
+import com.ovrbach.mvolvochallenge.model.dto.response.TokenResponse
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST

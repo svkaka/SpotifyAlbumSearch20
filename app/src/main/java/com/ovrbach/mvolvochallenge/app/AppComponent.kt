@@ -28,19 +28,6 @@ class RemoteModule {
 @Module
 @InstallIn(ApplicationComponent::class)
 class MapperModule {
-
-//    @Provides
-//    fun provideAlbumMapper(
-//        artistMapper: ArtistMapper,
-//        imageMapper: ImageMapper
-//    ): AlbumResponseMapper =
-//        AlbumResponseMapper(artistMapper = artistMapper, imageMapper = imageMapper)
-
-    @Provides
-    fun provideArtistMapper(): ArtistMapper = ArtistMapper()
-
-    @Provides
-    fun provideImageMapper(): ImageMapper = ImageMapper()
 }
 
 class RepositoryModule {

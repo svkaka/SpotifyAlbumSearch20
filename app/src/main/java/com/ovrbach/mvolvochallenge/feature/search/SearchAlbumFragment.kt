@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.feature
+package com.ovrbach.mvolvochallenge.feature.search
 
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ovrbach.mvolvochallenge.R
 import com.ovrbach.mvolvochallenge.core.BaseViewFragment
 import com.ovrbach.mvolvochallenge.databinding.SearchAlbumFragmentBinding
+import com.ovrbach.mvolvochallenge.feature.details.AlbumDetailsFragment
+import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,7 +19,10 @@ class SearchAlbumFragment : BaseViewFragment<SearchAlbumFragmentBinding>(
 
     private val searchViewModel: SearchAlbumViewModel by viewModels()
 
-    private val searchAlbumAdapter = SearchAlbumAdapter()
+    private val searchAlbumAdapter =
+        SearchAlbumAdapter {
+            searchViewModel.onItemClick(it)
+        }
 
     override fun bindView(view: View): SearchAlbumFragmentBinding =
         SearchAlbumFragmentBinding.bind(view)
@@ -42,6 +47,13 @@ class SearchAlbumFragment : BaseViewFragment<SearchAlbumFragmentBinding>(
             }
         })
 
+        searchViewModel.signal.observe(viewLifecycleOwner, Observer { signal ->
+            when (signal) {
+                is SearchAlbumViewModel.Signal.OpenDetails -> showDetailsFragment(signal.albumItem)
+                null -> noop()
+            }
+        })
+
         editText.doAfterTextChanged { text ->
             searchViewModel.search(text?.toString())
         }
@@ -61,6 +73,7 @@ class SearchAlbumFragment : BaseViewFragment<SearchAlbumFragmentBinding>(
     private fun SearchAlbumFragmentBinding.showFailedView(state: SearchAlbumViewModel.State.Failed) {
         empty.visibility = View.GONE
         searchAlbumAdapter.submitList(null)
+        buildErrorSnackbar(state.throwable.message!!).show()
     }
 
     private fun SearchAlbumFragmentBinding.showProgress() {
@@ -71,4 +84,11 @@ class SearchAlbumFragment : BaseViewFragment<SearchAlbumFragmentBinding>(
         progress.visibility = View.GONE
     }
 
+    private fun showDetailsFragment(item: AlbumItem) {
+        AlbumDetailsFragment.newInstance(item)
+            .show(parentFragmentManager, null)
+    }
+
 }
+
+private inline fun noop() = Unit

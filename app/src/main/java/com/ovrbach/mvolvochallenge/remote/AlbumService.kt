@@ -1,7 +1,7 @@
 package com.ovrbach.mvolvochallenge.remote
 
-import com.ovrbach.mvolvochallenge.model.dto.details.AlbumDetailsResponse
-import com.ovrbach.mvolvochallenge.model.dto.search.AlbumsSearchResponse
+import com.ovrbach.mvolvochallenge.model.dto.response.AlbumDetailsResponse
+import com.ovrbach.mvolvochallenge.model.dto.response.AlbumsSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

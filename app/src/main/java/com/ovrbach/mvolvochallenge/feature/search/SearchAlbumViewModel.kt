@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.feature
+package com.ovrbach.mvolvochallenge.feature.search
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.ovrbach.mvolvochallenge.data.AlbumRepository
 import com.ovrbach.mvolvochallenge.data.Outcome
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
+import com.ovrbach.mvolvochallenge.util.LiveEvent
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -16,13 +17,15 @@ class SearchAlbumViewModel @ViewModelInject constructor(
 
     val state: MutableLiveData<State> = MutableLiveData()
     val sideEffects: MutableLiveData<SideEffect?> = MutableLiveData()
+    val signal: LiveEvent<Signal?> = LiveEvent()
 
     private val inputFlow = MutableStateFlow<String?>(null)
     private val sideEffectFlow = MutableStateFlow<SideEffect?>(null)
     private val searchFlow = inputFlow
         .debounce(500)
         .mapLatest { input ->
-            sideEffectFlow.value = SideEffect.Loading
+            sideEffectFlow.value =
+                SideEffect.Loading
             if (input.isNullOrEmpty()) {
                 State.Empty
             } else {
@@ -30,9 +33,13 @@ class SearchAlbumViewModel @ViewModelInject constructor(
                     is Outcome.Success -> if (result.data.isEmpty()) {
                         State.Empty
                     } else {
-                        State.Success(items = result.data)
+                        State.Success(
+                            items = result.data
+                        )
                     }
-                    is Outcome.Failed -> State.Failed(throwable = result.throwable)
+                    is Outcome.Failed -> State.Failed(
+                        throwable = result.throwable
+                    )
                 }
             }
         }.onEach {
@@ -59,6 +66,10 @@ class SearchAlbumViewModel @ViewModelInject constructor(
         }
     }
 
+    fun onItemClick(item: AlbumItem) {
+        signal.postValue(Signal.OpenDetails(item))
+    }
+
     sealed class State {
         object Empty : State()
         data class Failed(val throwable: Throwable) : State()
@@ -69,4 +80,7 @@ class SearchAlbumViewModel @ViewModelInject constructor(
         object Loading : SideEffect()
     }
 
+    sealed class Signal {
+        data class OpenDetails(val albumItem: AlbumItem) : Signal()
+    }
 }

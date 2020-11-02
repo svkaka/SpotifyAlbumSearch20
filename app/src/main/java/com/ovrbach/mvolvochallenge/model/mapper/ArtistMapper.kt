@@ -1,13 +1,13 @@
 package com.ovrbach.mvolvochallenge.model.mapper
 
-import com.ovrbach.mvolvochallenge.model.dto.search.AlbumsSearchResponse
+import com.ovrbach.mvolvochallenge.model.dto.ArtistDTO
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
+import com.ovrbach.mvolvochallenge.model.entity.Artist
+import javax.inject.Inject
 
-class ArtistMapper(
-
-) {
-    fun toDomain(artist: AlbumsSearchResponse.Albums.AlbumShort.Artist) =
-        AlbumItem.Artist(
+class ArtistMapper  @Inject constructor() {
+    fun toDomain(artist: ArtistDTO) =
+        Artist(
             name = artist.name,
             uri = artist.uri
         )

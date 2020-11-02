@@ -1,5 +1,9 @@
 package com.ovrbach.mvolvochallenge.model.entity
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class AlbumItem(
     val id: String,
     val name: String,
@@ -8,14 +12,7 @@ data class AlbumItem(
     val uri: String,
     val artists: List<Artist>,
     val images: List<Image>
-) {
-    data class Artist(
-        val name: String,
-        val uri: String
-    )
+) : Parcelable {
 
-    data class Image(
-        val height: Int,
-        val url: String
-    )
+
 }

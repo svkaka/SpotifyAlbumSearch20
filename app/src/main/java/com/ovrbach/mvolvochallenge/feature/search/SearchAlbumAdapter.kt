@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.feature
+package com.ovrbach.mvolvochallenge.feature.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,11 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.ovrbach.mvolvochallenge.databinding.SearchAlbumFragmentBinding
 import com.ovrbach.mvolvochallenge.databinding.SearchAlbumItemBinding
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
 
-class SearchAlbumAdapter() : ListAdapter<AlbumItem, SearchAlbumAdapter.ViewHolder>(
+class SearchAlbumAdapter(
+    private val onItemClick: (AlbumItem) -> Unit
+) : ListAdapter<AlbumItem, SearchAlbumAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<AlbumItem>() {
         override fun areItemsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean =
             oldItem.id == newItem.id
@@ -23,15 +24,25 @@ class SearchAlbumAdapter() : ListAdapter<AlbumItem, SearchAlbumAdapter.ViewHolde
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(SearchAlbumItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ViewHolder(
+            SearchAlbumItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
 
-    class ViewHolder(val binding: SearchAlbumItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(
+        private val binding: SearchAlbumItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                onItemClick(getItem(adapterPosition))
+            }
+        }
+
         fun bind(item: AlbumItem) {
             with(binding) {
                 artists.text = item.artists.joinToString { it.name }

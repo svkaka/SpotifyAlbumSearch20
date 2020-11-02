@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.model.dto.auth
+package com.ovrbach.mvolvochallenge.model.dto.response
 
 data class TokenResponse(
     val access_token: String,

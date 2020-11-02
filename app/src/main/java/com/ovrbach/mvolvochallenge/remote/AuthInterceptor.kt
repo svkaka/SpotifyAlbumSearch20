@@ -1,6 +1,6 @@
 package com.ovrbach.mvolvochallenge.remote
 
-import com.ovrbach.mvolvochallenge.model.dto.auth.TokenResponse
+import com.ovrbach.mvolvochallenge.model.dto.response.TokenResponse
 import kotlinx.coroutines.runBlocking
 import okhttp3.Credentials
 import okhttp3.Interceptor

@@ -1,6 +1,6 @@
 package com.ovrbach.mvolvochallenge.model.mapper
 
-import com.ovrbach.mvolvochallenge.model.dto.search.AlbumsSearchResponse
+import com.ovrbach.mvolvochallenge.model.dto.response.AlbumsSearchResponse
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
 import javax.inject.Inject
 

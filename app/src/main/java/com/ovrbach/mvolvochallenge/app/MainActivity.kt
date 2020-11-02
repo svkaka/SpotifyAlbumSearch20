@@ -3,7 +3,7 @@ package com.ovrbach.mvolvochallenge.app
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ovrbach.mvolvochallenge.R
-import com.ovrbach.mvolvochallenge.feature.SearchAlbumFragment
+import com.ovrbach.mvolvochallenge.feature.search.SearchAlbumFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,7 +14,9 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.content, SearchAlbumFragment())
+            .replace(R.id.content,
+                SearchAlbumFragment()
+            )
             .commit()
     }
 }
