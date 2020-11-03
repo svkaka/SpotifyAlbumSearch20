@@ -1,21 +1,20 @@
 package com.ovrbach.mvolvochallenge.remote
 
-import com.ovrbach.mvolvochallenge.app.di.ClientId
-import com.ovrbach.mvolvochallenge.app.di.ClientSecret
+import com.ovrbach.mvolvochallenge.app.di.qualifier.ClientId
+import com.ovrbach.mvolvochallenge.app.di.qualifier.ClientSecret
 import com.ovrbach.mvolvochallenge.model.dto.response.TokenResponse
 import com.ovrbach.mvolvochallenge.model.entity.Session
 import kotlinx.coroutines.runBlocking
 import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
-    @ClientId private val client: String,
-    @ClientSecret private val secret: String,
-    private val session: Session,
-    private val authService: AuthService
+        @ClientId private val client: String,
+        @ClientSecret private val secret: String,
+        private val session: Session,
+        private val authService: AuthService
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response? = runBlocking {

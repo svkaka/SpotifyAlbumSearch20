@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.app.di
+package com.ovrbach.mvolvochallenge.app.di.qualifier
 
 import javax.inject.Qualifier
 

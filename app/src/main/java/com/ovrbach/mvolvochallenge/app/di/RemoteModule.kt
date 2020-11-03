@@ -1,8 +1,11 @@
 package com.ovrbach.mvolvochallenge.app.di
 
-import com.ovrbach.mvolvochallenge.model.entity.Session
-import com.ovrbach.mvolvochallenge.model.entity.SessionImpl
-import com.ovrbach.mvolvochallenge.remote.*
+import com.ovrbach.mvolvochallenge.app.di.qualifier.ClientId
+import com.ovrbach.mvolvochallenge.app.di.qualifier.ClientSecret
+import com.ovrbach.mvolvochallenge.remote.AuthInterceptor
+import com.ovrbach.mvolvochallenge.remote.AuthService
+import com.ovrbach.mvolvochallenge.remote.RemoteServiceConstants
+import com.ovrbach.mvolvochallenge.remote.SearchService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,12 +50,4 @@ class RemoteModule {
     @ClientId
     fun provideClientId() = RemoteServiceConstants.CLIENT_CODE
 
-}
-
-@Module
-@InstallIn(ApplicationComponent::class)
-class UtilModule {
-
-    @Provides
-    fun provideSession(): Session = SessionImpl()
 }
