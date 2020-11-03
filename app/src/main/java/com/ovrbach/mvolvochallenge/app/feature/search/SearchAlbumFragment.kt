@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.feature.search
+package com.ovrbach.mvolvochallenge.app.feature.search
 
 import android.view.View
 import androidx.core.view.isVisible
@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ovrbach.mvolvochallenge.R
 import com.ovrbach.mvolvochallenge.core.BaseViewFragment
 import com.ovrbach.mvolvochallenge.databinding.SearchAlbumFragmentBinding
-import com.ovrbach.mvolvochallenge.feature.details.AlbumDetailsFragment
+import com.ovrbach.mvolvochallenge.app.feature.details.AlbumDetailsFragment
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
-import com.ovrbach.mvolvochallenge.util.noop
+import com.ovrbach.mvolvochallenge.core.util.noop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest

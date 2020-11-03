@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.feature.search
+package com.ovrbach.mvolvochallenge.app.feature.search
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
@@ -10,10 +10,9 @@ import com.ovrbach.mvolvochallenge.data.AlbumRepository
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
 import com.ovrbach.mvolvochallenge.model.mapper.AlbumResponseMapper
 import com.ovrbach.mvolvochallenge.remote.RemoteServiceConstants
-import com.ovrbach.mvolvochallenge.util.LiveEvent
+import com.ovrbach.mvolvochallenge.core.util.LiveEvent
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.broadcastIn
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch

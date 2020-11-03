@@ -12,7 +12,4 @@ data class AlbumItem(
     val uri: String,
     val artists: List<Artist>,
     val images: List<Image>
-) : Parcelable {
-
-
-}
+) : Parcelable

@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.util
+package com.ovrbach.mvolvochallenge.core.util
 
 /**
  * Copyright 2019 Hadi Lashkari Ghouchani

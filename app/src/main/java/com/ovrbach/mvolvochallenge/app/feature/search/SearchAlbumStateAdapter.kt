@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.feature.search
+package com.ovrbach.mvolvochallenge.app.feature.search
 
 import android.view.LayoutInflater
 import android.view.View

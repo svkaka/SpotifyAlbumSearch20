@@ -1,4 +1,4 @@
-package com.ovrbach.mvolvochallenge.feature.details
+package com.ovrbach.mvolvochallenge.app.feature.details
 
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject

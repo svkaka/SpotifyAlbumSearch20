@@ -1,7 +1,5 @@
-package com.ovrbach.mvolvochallenge.app
+package com.ovrbach.mvolvochallenge.app.di
 
-import com.ovrbach.mvolvochallenge.app.di.ClientId
-import com.ovrbach.mvolvochallenge.app.di.ClientSecret
 import com.ovrbach.mvolvochallenge.model.entity.Session
 import com.ovrbach.mvolvochallenge.model.entity.SessionImpl
 import com.ovrbach.mvolvochallenge.remote.*
