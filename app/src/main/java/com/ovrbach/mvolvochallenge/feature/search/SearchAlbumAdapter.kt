@@ -2,6 +2,8 @@ package com.ovrbach.mvolvochallenge.feature.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +13,7 @@ import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
 
 class SearchAlbumAdapter(
     private val onItemClick: (AlbumItem) -> Unit
-) : ListAdapter<AlbumItem, SearchAlbumAdapter.ViewHolder>(
+) : PagingDataAdapter<AlbumItem, SearchAlbumAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<AlbumItem>() {
         override fun areItemsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean =
             oldItem.id == newItem.id
@@ -22,16 +24,14 @@ class SearchAlbumAdapter(
     }
 ) {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
             SearchAlbumItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        getItem(position)?.let { item -> holder.bind(item) } ?: holder.placeholder()
     }
-
 
     inner class ViewHolder(
         private val binding: SearchAlbumItemBinding
@@ -39,7 +39,7 @@ class SearchAlbumAdapter(
 
         init {
             binding.root.setOnClickListener {
-                onItemClick(getItem(adapterPosition))
+                getItem(bindingAdapterPosition)?.let { item -> onItemClick(item) }
             }
         }
 
@@ -49,6 +49,12 @@ class SearchAlbumAdapter(
                 name.text = item.name
                 releaseDate.text = item.releaseDate
                 image.load(item.images.firstOrNull()?.url)
+            }
+        }
+
+        fun placeholder() {
+            with(binding) {
+                artists.text = "Loading"
             }
         }
 

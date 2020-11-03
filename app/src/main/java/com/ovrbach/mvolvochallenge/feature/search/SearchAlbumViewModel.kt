@@ -1,66 +1,39 @@
 package com.ovrbach.mvolvochallenge.feature.search
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.ovrbach.mvolvochallenge.data.AlbumRepository
-import com.ovrbach.mvolvochallenge.data.Outcome
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
+import com.ovrbach.mvolvochallenge.model.mapper.AlbumResponseMapper
+import com.ovrbach.mvolvochallenge.remote.RemoteServiceConstants
+import com.ovrbach.mvolvochallenge.remote.SearchService
 import com.ovrbach.mvolvochallenge.util.LiveEvent
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SearchAlbumViewModel @ViewModelInject constructor(
-    private val albumService: AlbumRepository
+        private val albumService: AlbumRepository,
+        private val searchService: SearchService,
+        private val albumResponseMapper: AlbumResponseMapper
 ) : ViewModel() {
 
-    val state: MutableLiveData<State> = MutableLiveData()
-    val sideEffects: MutableLiveData<SideEffect?> = MutableLiveData()
     val signal: LiveEvent<Signal?> = LiveEvent()
-
     private val inputFlow = MutableStateFlow<String?>(null)
-    private val sideEffectFlow = MutableStateFlow<SideEffect?>(null)
-    private val searchFlow = inputFlow
-        .debounce(500)
-        .mapLatest { input ->
-            sideEffectFlow.value =
-                SideEffect.Loading
-            if (input.isNullOrEmpty()) {
-                State.Empty
-            } else {
-                when (val result = albumService.searchAlbums(input)) {
-                    is Outcome.Success -> if (result.data.isEmpty()) {
-                        State.Empty
-                    } else {
-                        State.Success(
-                            items = result.data
-                        )
-                    }
-                    is Outcome.Failed -> State.Failed(
-                        throwable = result.throwable
-                    )
-                }
-            }
-        }.onEach {
-            sideEffectFlow.value = null
-        }
+    val searchEnabled = inputFlow.map { value -> !value.isNullOrEmpty() }
 
-    init {
-        viewModelScope.launch {
-            searchFlow.collect { result ->
-                state.postValue(result)
-            }
-        }
+    fun submitSearch(query: String?) =
+            Pager(
+                PagingConfig(pageSize = RemoteServiceConstants.ALBUMS_REQUEST_LIMIT)
+            ) {
+                SearchPagingSource(searchService, query, albumResponseMapper)
+            }.flow.cachedIn(viewModelScope)
 
-        viewModelScope.launch {
-            sideEffectFlow.collect { effects ->
-                sideEffects.postValue(effects)
-            }
-        }
-    }
-
-    fun search(input: String?) {
+    fun onInputChanged(input: String?) {
         viewModelScope.launch {
             inputFlow.value = input
         }
@@ -68,16 +41,6 @@ class SearchAlbumViewModel @ViewModelInject constructor(
 
     fun onItemClick(item: AlbumItem) {
         signal.postValue(Signal.OpenDetails(item))
-    }
-
-    sealed class State {
-        object Empty : State()
-        data class Failed(val throwable: Throwable) : State()
-        data class Success(val items: List<AlbumItem>) : State()
-    }
-
-    sealed class SideEffect {
-        object Loading : SideEffect()
     }
 
     sealed class Signal {

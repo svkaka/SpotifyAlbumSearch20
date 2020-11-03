@@ -9,6 +9,8 @@ data class AlbumsSearchResponse(
     data class Albums(
         val href: String,
         val items: List<AlbumShortDTO>,
-        val total: Long
+        val total: Long,
+        val next: String,
+        val offset: Int
     )
 }
