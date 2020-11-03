@@ -7,52 +7,23 @@ import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ovrbach.mvolvochallenge.databinding.SearchAlbumStateErrorItemBinding
-import com.ovrbach.mvolvochallenge.databinding.SearchAlbumStateLoadingItemBinding
+import com.ovrbach.mvolvochallenge.databinding.SearchAlbumStateItemBinding
 
 class SearchAlbumStateAdapter(
         private val onRetryClick: () -> Unit
 ) : LoadStateAdapter<SearchAlbumStateAdapter.ViewHolder>() {
 
+    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): ViewHolder = ViewHolder(
+            SearchAlbumStateItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    )
+
     override fun onBindViewHolder(holder: ViewHolder, loadState: LoadState) {
         holder.bind(loadState)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): ViewHolder = when (loadState) {
-        is LoadState.NotLoading -> LoadingViewHolder(
-                SearchAlbumStateLoadingItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        )
-        LoadState.Loading -> LoadingViewHolder(
-                SearchAlbumStateLoadingItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        )
-        is LoadState.Error -> ErrorViewHolder(
-                SearchAlbumStateErrorItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        )
-    }
-
-
-    abstract inner class ViewHolder(
-            view: View
-    ) : RecyclerView.ViewHolder(view) {
-        abstract fun bind(state: LoadState)
-    }
-
-    inner class LoadingViewHolder(
-            private val binding: SearchAlbumStateLoadingItemBinding
-    ) : ViewHolder(binding.root) {
-
-        override fun bind(state: LoadState) {
-            when(loadState){
-                is LoadState.NotLoading -> binding.progress.isVisible = false
-                LoadState.Loading ->  binding.progress.isVisible = true
-                else -> throw IllegalStateException("Only loading and not-loading supported by this viewholder")
-            }
-        }
-    }
-
-    inner class ErrorViewHolder(
-            private val binding: SearchAlbumStateErrorItemBinding
-    ) : ViewHolder(binding.root) {
+    inner class ViewHolder(
+            private val binding: SearchAlbumStateItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.retry.setOnClickListener {
@@ -60,9 +31,31 @@ class SearchAlbumStateAdapter(
             }
         }
 
-        override fun bind(state: LoadState) {
-            binding.error.text = (state as LoadState.Error).error.message
+        fun bind(state: LoadState) {
+            when (state) {
+                is LoadState.NotLoading -> binding.showNotLoading(state)
+                LoadState.Loading -> binding.showLoading()
+                is LoadState.Error -> binding.showError(state)
+            }
         }
 
+        fun SearchAlbumStateItemBinding.showLoading() {
+            binding.progressLayout.isVisible = true
+            binding.progress.isVisible = true
+            errorLayout.isVisible = false
+        }
+
+        fun SearchAlbumStateItemBinding.showNotLoading(state: LoadState.NotLoading) {
+            binding.progressLayout.isVisible = true
+            binding.progress.isVisible = false
+            errorLayout.isVisible = false
+        }
+
+        fun SearchAlbumStateItemBinding.showError(state: LoadState.Error) {
+            binding.progressLayout.isVisible = false
+            errorLayout.isVisible = true
+            error.text = state.error.message
+        }
     }
+
 }

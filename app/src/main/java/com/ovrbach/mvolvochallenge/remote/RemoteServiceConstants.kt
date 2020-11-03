@@ -8,5 +8,5 @@ object RemoteServiceConstants{
     const val ALBUMS_REQUEST_TYPE = "album"
 
     const val CLIENT_CODE = "f8fb471dff7c4a7a95f361395b848fde"
-    const val SECRET = "TODO"
+    const val SECRET = "TODO" //todo add key here
 }

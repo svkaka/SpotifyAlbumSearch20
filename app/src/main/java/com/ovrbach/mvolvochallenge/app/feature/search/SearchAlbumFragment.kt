@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.lang.Error
 
 @AndroidEntryPoint
 class SearchAlbumFragment : BaseViewFragment<SearchAlbumFragmentBinding>(
@@ -34,12 +35,17 @@ class SearchAlbumFragment : BaseViewFragment<SearchAlbumFragmentBinding>(
     override fun SearchAlbumFragmentBinding.onViewCreated() {
         list.setHasFixedSize(true)
         list.layoutManager = LinearLayoutManager(requireContext())
-        list.adapter = searchAlbumAdapter
-                .withLoadStateFooter(
-                        SearchAlbumStateAdapter { searchAlbumAdapter.retry() }
-                )
+        list.adapter = searchAlbumAdapter.withLoadStateFooter(
+                SearchAlbumStateAdapter { searchAlbumAdapter.retry() }
+        )
 
         searchAlbumAdapter.addLoadStateListener { combinedLoadStates ->
+            val refreshState = combinedLoadStates.source.refresh
+            if (refreshState is LoadState.Error) {
+                buildErrorSnackbar(refreshState.error.message!!) { searchAlbumAdapter.retry() }.show()
+            } else {
+                dismissSnackbar()
+            }
             empty.isVisible = combinedLoadStates.refresh is LoadState.NotLoading &&
                     searchAlbumAdapter.itemCount == 0
         }

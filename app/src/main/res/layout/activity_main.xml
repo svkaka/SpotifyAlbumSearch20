@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".app.MainActivity">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/searchFragment"
         android:name="com.ovrbach.mvolvochallenge.app.feature.search.SearchAlbumFragment"
         android:layout_width="match_parent"

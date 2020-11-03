@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">MVolvoChallenge</string>
+
+    <string name="search">Search</string>
+    <string name="retry">Retry</string>
+
+    <string name="cd_album_art">Album art</string>
+
+    <string name="error_no_internet">Please check your internet connection</string>
+
+    <string name="search_hint">Search for albums…</string>
+    <string name="search_cta_empty_state">Update search query to find Albums</string>
+    <string name="search_error_title">This shouldn\'t be the end</string>
+
+    <string name="details_error_title">Failed to load details\n%s</string>
 </resources>

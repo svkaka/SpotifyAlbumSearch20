@@ -31,7 +31,8 @@ abstract class BaseViewFragment<B : ViewBinding>(layoutRes: Int) : Fragment(layo
     }
 
     protected fun buildErrorSnackbar(
-        message: CharSequence
+        message: CharSequence,
+        action: ()-> Unit
     ): Snackbar {
         dismissSnackbar()
 
@@ -39,8 +40,8 @@ abstract class BaseViewFragment<B : ViewBinding>(layoutRes: Int) : Fragment(layo
             binding!!.root, message,
             Snackbar.LENGTH_INDEFINITE
         ).also { snack ->
-            snack.setAction("Ok") {
-                dismissSnackbar()
+            snack.setAction("Retry") {
+                action()
             }
             snackBar = snack
         }

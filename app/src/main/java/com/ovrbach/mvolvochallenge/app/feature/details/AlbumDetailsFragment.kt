@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
+import com.ovrbach.mvolvochallenge.R
 import com.ovrbach.mvolvochallenge.databinding.AlbumDetailsFragmentBinding
 import com.ovrbach.mvolvochallenge.model.entity.AlbumDetails
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
@@ -27,22 +28,19 @@ class AlbumDetailsFragment : BottomSheetDialogFragment() {
     }
 
     private val albumDetailsViewModel: AlbumDetailsViewModel by viewModels()
-
-    private lateinit var binding: AlbumDetailsFragmentBinding
-    private var snackBar: Snackbar? = null
-
     private val tracksAdapter = AlbumTracksAdapter()
 
+    private lateinit var binding: AlbumDetailsFragmentBinding
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? = AlbumDetailsFragmentBinding.inflate(inflater).also {
         binding = it
     }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         albumDetailsViewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is AlbumDetailsViewModel.State.PartiallyLoaded -> binding.showPartialView(state.albumItem)
@@ -51,7 +49,6 @@ class AlbumDetailsFragment : BottomSheetDialogFragment() {
             }
 
         })
-        val item = requireArguments().getParcelable<AlbumItem>(ALBUM_ITEM)!!
         with(binding) {
             list.adapter = tracksAdapter
             list.layoutManager = LinearLayoutManager(requireContext())
@@ -59,6 +56,7 @@ class AlbumDetailsFragment : BottomSheetDialogFragment() {
     }
 
     private fun AlbumDetailsFragmentBinding.showPartialView(item: AlbumItem) {
+        error.isVisible =false
         artists.text = item.artists.joinToString { it.name }
         name.text = item.name
         releaseDate.text = item.releaseDate
@@ -66,7 +64,8 @@ class AlbumDetailsFragment : BottomSheetDialogFragment() {
     }
 
     private fun AlbumDetailsFragmentBinding.showDetails(details: AlbumDetails) {
-        progress.visibility = View.GONE
+        error.isVisible =false
+        progress.isVisible = false
         artists.text = details.artists.joinToString { it.name }
         name.text = details.name
         releaseDate.text = details.releaseDate
@@ -75,29 +74,9 @@ class AlbumDetailsFragment : BottomSheetDialogFragment() {
     }
 
     private fun AlbumDetailsFragmentBinding.showError(state: AlbumDetailsViewModel.State.Failed) {
-        progress.visibility = View.GONE
-        buildErrorSnackbar(state.throwable.message!!)
-    }
-
-    private fun buildErrorSnackbar(
-        message: CharSequence
-    ): Snackbar {
-        dismissSnackbar()
-
-        return Snackbar.make(
-            binding.root, message,
-            Snackbar.LENGTH_INDEFINITE
-        ).also { snack ->
-            snack.setAction("Ok") {
-                dismissSnackbar()
-            }
-            snackBar = snack
-        }
-    }
-
-    private fun dismissSnackbar() {
-        snackBar?.dismiss()
-        snackBar = null
+        error.isVisible =true
+        progress.isVisible = false
+        error.text = getString(R.string.details_error_title, state.throwable.message)
     }
 
 

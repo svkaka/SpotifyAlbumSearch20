@@ -38,16 +38,10 @@ class AlbumTracksAdapter : ListAdapter<Track, AlbumTracksAdapter.ViewHolder>(
             with(binding) {
                 artists.text = item.artists.joinToString { it.name }
                 name.text = item.name
-                duration.text = toMinutesAndSeconds(item.durationMs)
+                duration.text = item.durationsString
                 number.text = String.format("#%02d", item.trackNumber)
             }
         }
 
-        //todo move to mapper
-        fun toMinutesAndSeconds(millis: Int): String {
-            val seconds = (millis / 1000 % 60)
-            val minutes = (millis / 1000 / 60)
-            return "$minutes:$seconds"
-        }
     }
 }

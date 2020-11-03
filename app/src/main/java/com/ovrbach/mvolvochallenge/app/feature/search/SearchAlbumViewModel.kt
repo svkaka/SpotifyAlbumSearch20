@@ -28,9 +28,7 @@ class SearchAlbumViewModel @ViewModelInject constructor(
 
     fun submitSearch(query: String?) {
         viewModelScope.launch {
-            Pager(
-                PagingConfig(pageSize = RemoteServiceConstants.ALBUMS_REQUEST_LIMIT)
-            ) {
+            Pager(PagingConfig(pageSize = RemoteServiceConstants.ALBUMS_REQUEST_LIMIT)) {
                 SearchPagingSource(albumRepository, query)
             }.flow.cachedIn(viewModelScope).collect {
                 pages.value = it

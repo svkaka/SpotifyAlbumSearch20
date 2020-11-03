@@ -11,7 +11,8 @@ import javax.inject.Inject
 class AlbumRepository @Inject constructor(
         private val remoteSource: SearchService,
         private val albumsMapper: AlbumResponseMapper,
-        private val detailsMapper: AlbumDetailsMapper
+        private val detailsMapper: AlbumDetailsMapper,
+        private val errorHandler: ErrorHandler
 ) {
 
     suspend fun searchAlbums(query: String?, offset: Int, limit: Int): Outcome<AlbumSearchResponse> =
@@ -22,11 +23,11 @@ class AlbumRepository @Inject constructor(
     }
 
 
-    suspend fun <T> request(request: suspend () -> T): Outcome<T> = try {
+    private suspend fun <T> request(request: suspend () -> T): Outcome<T> = try {
         Outcome.Success(request())
     } catch (t: Throwable) {
-        //todo better error message
-        Outcome.Failed(t)
+        t.printStackTrace()
+        Outcome.Failed(errorHandler.mapError(t))
     }
 
 }

@@ -13,8 +13,8 @@ import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
 import kotlinx.coroutines.launch
 
 class AlbumDetailsViewModel @ViewModelInject constructor(
-    private val albumService: AlbumRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
+        private val albumService: AlbumRepository,
+        @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val state: MutableLiveData<State> = MutableLiveData()
@@ -24,10 +24,11 @@ class AlbumDetailsViewModel @ViewModelInject constructor(
         state.postValue(State.PartiallyLoaded(albumItem))
 
         viewModelScope.launch {
-            when(val outcome = albumService.albumDetails(albumItem.id)){
-                is Outcome.Success -> state.postValue(State.Loaded(outcome.data))
-                is Outcome.Failed -> State.Failed(outcome.throwable)
-            }
+            state.postValue(
+                    when (val outcome = albumService.albumDetails(albumItem.id)) {
+                        is Outcome.Success -> State.Loaded(outcome.data)
+                        is Outcome.Failed -> State.Failed(outcome.throwable)
+                    })
         }
     }
 
