@@ -50,23 +50,22 @@ class SearchAlbumFragment : BaseViewFragment<SearchAlbumFragmentBinding>(
                 null -> noop()
             }
         })
+        searchViewModel.searchEnabled.observe(viewLifecycleOwner, Observer { enable ->
+            search.isEnabled = enable
+        })
+
+        searchViewModel.pages.observe(viewLifecycleOwner, Observer { data ->
+            searchAlbumAdapter.submitData(lifecycle, data)
+        })
+
 
         editText.doAfterTextChanged { text ->
             searchViewModel.onInputChanged(text?.toString())
         }
 
         search.setOnClickListener {
-            lifecycleScope.launch {
-                searchViewModel.submitSearch(editText.text?.toString()).collectLatest { data ->
-                    searchAlbumAdapter.submitData(data)
-                }
-            }
+            searchViewModel.submitSearch(editText.text?.toString())
         }
-
-        lifecycleScope.launch {
-            searchViewModel.searchEnabled.collectLatest { enable -> search.isEnabled = enable }
-        }
-
     }
 
     private fun showDetailsFragment(item: AlbumItem) {

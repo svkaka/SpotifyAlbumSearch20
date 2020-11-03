@@ -1,43 +1,31 @@
 package com.ovrbach.mvolvochallenge.feature.search
 
-import android.net.Uri
 import androidx.paging.PagingSource
+import com.ovrbach.mvolvochallenge.data.AlbumRepository
+import com.ovrbach.mvolvochallenge.data.Outcome
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
-import com.ovrbach.mvolvochallenge.model.mapper.AlbumResponseMapper
-import com.ovrbach.mvolvochallenge.remote.SearchService
 
 class SearchPagingSource(
-        private val backend: SearchService,
-        private val input: String?,
-        private val responseMapper: AlbumResponseMapper
+        private val repository: AlbumRepository,
+        private val input: String?
 ) : PagingSource<Int, AlbumItem>() {
     override suspend fun load(
             params: LoadParams<Int>
     ): LoadResult<Int, AlbumItem> {
-        try {
-            val nextPageNumber = params.key ?: 0
-            val response = backend.getAlbums(
-                    query = input,
-                    offset = nextPageNumber,
-                    limit = params.loadSize
-            )
-            val data = responseMapper.toDomain(response)
-            val nextPage = parseNextOffset(response.albums.next)
-            return LoadResult.Page(
-                    data = data,
+        val nextPageNumber = params.key ?: 0
+        return when (val outcome = repository.searchAlbums(
+                query = input,
+                offset = nextPageNumber,
+                limit = params.loadSize
+        )) {
+            is Outcome.Success -> return LoadResult.Page(
+                    data = outcome.data.albums,
                     prevKey = null, // Only paging forward.
-                    nextKey = nextPage
+                    nextKey = outcome.data.next
             )
-        } catch (e: Exception) {
-            return LoadResult.Error(e)
+            is Outcome.Failed -> LoadResult.Error(outcome.throwable)
         }
-    }
 
-    private fun parseNextOffset(next: String) = try {
-        Uri.parse(next).let { uri -> uri.getQueryParameter("offset")?.toInt() }
-    } catch (throwable: Throwable) {
-        throwable.printStackTrace()
-        null
     }
 
 }

@@ -2,19 +2,20 @@ package com.ovrbach.mvolvochallenge.data
 
 import com.ovrbach.mvolvochallenge.model.entity.AlbumDetails
 import com.ovrbach.mvolvochallenge.model.entity.AlbumItem
+import com.ovrbach.mvolvochallenge.model.entity.AlbumSearchResponse
 import com.ovrbach.mvolvochallenge.model.mapper.AlbumDetailsMapper
 import com.ovrbach.mvolvochallenge.model.mapper.AlbumResponseMapper
 import com.ovrbach.mvolvochallenge.remote.SearchService
 import javax.inject.Inject
 
 class AlbumRepository @Inject constructor(
-    private val remoteSource: SearchService,
-    private val albumsMapper: AlbumResponseMapper,
-    private val detailsMapper: AlbumDetailsMapper
+        private val remoteSource: SearchService,
+        private val albumsMapper: AlbumResponseMapper,
+        private val detailsMapper: AlbumDetailsMapper
 ) {
 
-    suspend fun searchAlbums(query: String?): Outcome<List<AlbumItem>> =
-        request { albumsMapper.toDomain(remoteSource.getAlbums(query)) }
+    suspend fun searchAlbums(query: String?, offset: Int, limit: Int): Outcome<AlbumSearchResponse> =
+            request { albumsMapper.toDomain(remoteSource.getAlbums(query, offset = offset, limit = limit)) }
 
     suspend fun albumDetails(albumId: String): Outcome<AlbumDetails> = request {
         detailsMapper.toDomain(remoteSource.getAlbumDetails(albumId))
